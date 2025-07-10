@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+
+<h1> POCUS SIMULATOR Cardio Practice</h1>
+
+
+<body> position your phone as an ultra sound probe, the right side will be the side of the "indicator" and the top of the phone as the probe head.</body>
+
+<img id="hiddenImage" src="Cardio_Parasternal_Long_Axis.png" alt="Surprise Image" />
+
+<button type="button"
+onclick="document.getElementById('demo').innerHTML = gyroscope.start()">
+Click me to display rotation data.</button>
+
+<p id="demo"></p>
+
+<head>
+  <title>Phone Orientation</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    p {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Phone Orientation Data</h1>
+
+  <button id="enableButton">Enable Orientation</button>
+
+  <div id="orientationData" style="display: none;">
+    <p>Alpha (Z): <span id="alpha">0</span></p>
+    <p>Beta (X): <span id="beta">0</span></p>
+    <p>Gamma (Y): <span id="gamma">0</span></p>
+  </div>
+
+  <script>
+    function handleOrientation(event) {
+      document.getElementById("alpha").textContent = event.alpha.toFixed(2);
+      document.getElementById("beta").textContent = event.beta.toFixed(2);
+      document.getElementById("gamma").textContent = event.gamma.toFixed(2);
+    }
+
+    function enableOrientationTracking() {
+      const dataDiv = document.getElementById("orientationData");
+      const enableButton = document.getElementById("enableButton");
+
+      if (
+        typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function'
+      ) {
+        // iOS 13+ requires permission
+        DeviceOrientationEvent.requestPermission()
+          .then(permissionState => {
+            if (permissionState === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation);
+              dataDiv.style.display = 'block';
+              enableButton.style.display = 'none';
+            } else {
+              alert('Permission denied for orientation access.');
+            }
+          })
+          .catch(error => {
+            console.error(error);
+            alert('Error requesting permission: ' + error);
+          });
+      } else {
+        // Android or older iOS
+        window.addEventListener('deviceorientation', handleOrientation);
+        dataDiv.style.display = 'block';
+        enableButton.style.display = 'none';
+      }
+    }
+
+    document.getElementById("enableButton").addEventListener("click", enableOrientationTracking);
+  </script>
+</body>
+
+
